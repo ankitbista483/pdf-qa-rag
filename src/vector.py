@@ -7,10 +7,14 @@ import logging
 logging.getLogger("sentence_transformers").setLevel(logging.ERROR)
 
 
+import tempfile
+import os
+
 class Embedder:
-    def __init__(self,collection_name = 'QandA'):
-        self.model = SentenceTransformer('BAAI/bge-m3', device= 'mps')
-        self.client = chromadb.PersistentClient(path = './my_db')
+    def __init__(self, collection_name='QandA'):
+        self.model = SentenceTransformer('BAAI/bge-m3', device='cpu')
+        db_path = os.path.join(tempfile.gettempdir(), 'my_db')
+        self.client = chromadb.PersistentClient(path=db_path)
         self.collection = self.client.get_or_create_collection(name=collection_name)
     
     def embedder(self, chunks, metadatas):
